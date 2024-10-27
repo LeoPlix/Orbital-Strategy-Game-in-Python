@@ -51,7 +51,8 @@ def posicoes_iguais(pos1, pos2):
     Recebe duas posições e retorna um valor booleano True se forem iguais e False caso contrário.
     posicao x posicao → bool
     """
-    return pos1 == pos2
+    if eh_posicao(pos1) and eh_posicao(pos2):
+        return pos1 == pos2
 
 #Transformador
 
@@ -146,21 +147,21 @@ def eh_pedra(arg):
     Função que verifica se o argumento é uma pedra.
     universal → bool
     """
-    return arg in (-1, 0, 1)
+    return arg in (cria_pedra_preta(), cria_pedra_branca(), cria_pedra_neutra())
 
 def eh_pedra_branca(pedra):
     """ 
     Função que verifica se o argumento é uma pedra branca.
     pedra → bool
     """
-    return pedra == -1 or pedra == 'O'
+    return pedra == cria_pedra_branca() or pedra == pedra_para_str(cria_pedra_branca())
 
 def eh_pedra_preta(pedra):
     """ 
     Função que verifica se o argumento é uma pedra preta.
     pedra → bool
     """
-    return pedra == 1 or pedra == 'X'
+    return pedra == cria_pedra_preta() or pedra == pedra_para_str(cria_pedra_preta())
 
 #Teste 
 def pedras_iguais(pedra1, pedra2):
@@ -168,7 +169,8 @@ def pedras_iguais(pedra1, pedra2):
     Verifica se duas pedras são iguais.
     universal x universal → bool
     """
-    return pedra1 == pedra2
+    if eh_pedra(pedra1) and eh_pedra(pedra2):
+        return pedra1 == pedra2
 
 #Transformador
 def pedra_para_str(pedra):
@@ -176,12 +178,13 @@ def pedra_para_str(pedra):
     Função que converte uma pedra para string.
     pedra → str
     """
-    if pedra == -1:
-        return 'O'
-    elif pedra == 1:
-        return 'X'
-    else:
-        return ' '
+    if eh_pedra(pedra):
+        if pedra == cria_pedra_branca():
+            return 'O'
+        elif pedra == cria_pedra_preta():
+            return 'X'
+        else:
+            return ' '
     
 #Alto Nível
 def eh_pedra_jogador(pedra):
@@ -189,7 +192,7 @@ def eh_pedra_jogador(pedra):
     Função que verifica se a pedra é de um jogador, ou seja, não neutra.
     pedra → bool
     """
-    return pedra in (-1, 1)
+    return pedra in (cria_pedra_preta(), cria_pedra_branca())
 
 def pedra_para_int(pedra):
     """  
@@ -777,4 +780,4 @@ def multiplayer(tabuleiro, pedra):
     print("EMPATE")
     return 0
 
-#print(orbito(2, "normal", "X"))
+#print(orbito(2, "facil", "O"))
