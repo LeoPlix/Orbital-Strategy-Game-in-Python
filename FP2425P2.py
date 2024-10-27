@@ -22,20 +22,15 @@ def posicao_para_str(pos):
     return pos[0] + str(pos[1])
 
 def str_para_posicao(s):
-    if isinstance(s, str) and len(s) == 2 and s[0] in letras_possiveis and int(s[1]) in range(1,10):
+    if isinstance(s, str) and len(s) == 2 and s[0] in letras_possiveis and s[1].isdigit() in range(1,10):
         return cria_posicao(s[0], int(s[1]))
-    if isinstance(s, str) and len(s) == 3 and s[0] in letras_possiveis and int(s[1:3]) == 10:
+    if isinstance(s, str) and len(s) == 3 and s[0] in letras_possiveis and s[1:3] == "10":
         return cria_posicao(s[0], 10)
     return False
 
 def eh_posicao_valida(posicao, n):
     if eh_posicao(posicao):
-        soma = 0
-        for i in letras_possiveis:
-            soma += 1
-            if i == obtem_pos_col(posicao):
-                break
-        return soma <= n*2 and obtem_pos_lin(posicao) <= n*2
+        return obtem_pos_lin(posicao) <= n*2 and obtem_pos_col(posicao) in letras_possiveis[:n*2]
 
 def obtem_posicoes_adjacentes(posicao, n, d):
     if eh_posicao_valida(posicao, n):
@@ -130,18 +125,14 @@ def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
     if isinstance(n, int) and 2<=n<=5 and isinstance(tuplo_pretas, tuple) and isinstance(tuplo_brancas, tuple):
         tabuleiro = cria_tabuleiro_vazio(n)
         for posicao in tuplo_pretas:
-            if not eh_posicao(posicao):
-                raise ValueError('cria_tabuleiro: argumentos invalidos')
-            if not (1 <= obtem_pos_lin(posicao) <= n * 2 and obtem_pos_col(posicao) in letras_possiveis):
+            if not eh_posicao_valida(posicao, n):
                 raise ValueError('cria_tabuleiro: argumentos invalidos')
             linha = obtem_pos_lin(posicao) - 1
             coluna = letras_possiveis.index(obtem_pos_col(posicao))
             tabuleiro[linha][coluna] = cria_pedra_preta()
             
         for posicao in tuplo_brancas:
-            if not eh_posicao(posicao):
-                raise ValueError('cria_tabuleiro: argumentos invalidos')
-            if not (1 <= obtem_pos_lin(posicao) <= n * 2 and obtem_pos_col(posicao) in letras_possiveis):
+            if not eh_posicao_valida(posicao, n):
                 raise ValueError('cria_tabuleiro: argumentos invalidos')
             linha = obtem_pos_lin(posicao) - 1  # Converte linha para índice de 0 a n-1
             coluna = letras_possiveis.index(obtem_pos_col(posicao))  # Converte coluna para índice
@@ -248,14 +239,14 @@ def obtem_posicoes_pedra(tabuleiro, pedra):
     return tuple(ordena_posicoes(posicoes, obtem_numero_orbitas(tabuleiro)))
 
 def coloca_pedra(tabuleiro, posicao, pedra):
-    if eh_tabuleiro(tabuleiro) and eh_posicao(posicao) and eh_pedra(pedra):
+    if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra(pedra):
         linha = obtem_pos_lin(posicao) - 1
         coluna = letras_possiveis.index(obtem_pos_col(posicao))
         tabuleiro[linha][coluna] = pedra
         return tabuleiro
 
 def remove_pedra(tabuleiro, posicao):
-    if eh_tabuleiro(tabuleiro) and eh_posicao(posicao):
+    if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
         linha = obtem_pos_lin(posicao) - 1
         coluna = letras_possiveis.index(obtem_pos_col(posicao))
         tabuleiro[linha][coluna] = 0
@@ -294,16 +285,17 @@ def tabuleiro_para_str(tabuleiro):
     return string
 
 def move_pedra(tabuleiro, p1, p2):
-    if eh_tabuleiro(tabuleiro) and eh_posicao(p1) and eh_posicao(p2):
-        if obtem_pedra(tabuleiro, p1) == 0 or obtem_pedra(tabuleiro, p2) != 0:
-            return tabuleiro
+    if eh_tabuleiro(tabuleiro) and eh_posicao_valida(p1, obtem_numero_orbitas(tabuleiro)) and eh_posicao_valida(p2, obtem_numero_orbitas(tabuleiro)):
+        if obtem_pedra(tabuleiro, p1) == 0 or obtem_pedra(tabuleiro, p2) != 0 or p1 == p2:
+            return False
         tabuleiro = coloca_pedra(tabuleiro, p2, obtem_pedra(tabuleiro, p1))
         tabuleiro = remove_pedra(tabuleiro, p1)
         return tabuleiro
+    
     return False
 
 def obtem_posicao_seguinte(tabuleiro, posicao, d):
-    if eh_tabuleiro(tabuleiro) and eh_posicao(posicao) and d in (True, False):
+    if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and d in (True, False):
         linha = obtem_pos_lin(posicao) - 1
         coluna = letras_possiveis.index(obtem_pos_col(posicao))
         linha = obtem_pos_lin(posicao) - 1
@@ -351,7 +343,7 @@ def roda_tabuleiro(tabuleiro):
         
 
 def verifica_linha_pedras(tabuleiro, posicao, pedra, k):
-    if eh_tabuleiro(tabuleiro) and eh_posicao(posicao) and eh_pedra(pedra) and k > 0:
+    if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra(pedra) and 0 < k <= obtem_numero_orbitas(tabuleiro)*2:
         if obtem_pedra(tabuleiro, posicao) != pedra or obtem_pedra(tabuleiro, posicao) == 0:
             return False
         
@@ -369,6 +361,7 @@ def verifica_linha_pedras(tabuleiro, posicao, pedra, k):
         # Verifica se há valores consecutivos suficientes em qualquer direção
         if colunas_cons >= k or linhas_cons >= k or diag_cons >= k or antidiag_cons >= k:
             return True
+        
     return False
 
 def conta_consecutivos(tuplo1, pedra):
@@ -396,13 +389,14 @@ def eh_vencedor(tabuleiro, pedra):
     return False      
 
 def eh_fim_jogo(tabuleiro):
-    for i in range(len(tabuleiro)):
-        for j in range(len(tabuleiro)):
-            posicao = cria_posicao(letras_possiveis[j], i + 1)
-            if verifica_linha_pedras(tabuleiro, posicao, 1, obtem_numero_orbitas(tabuleiro)*2) or verifica_linha_pedras(tabuleiro, posicao, -1, obtem_numero_orbitas(tabuleiro)*2):
-                return True
-            if len(obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra())) == 0:
-                return True
+    if eh_tabuleiro(tabuleiro):
+        for i in range(len(tabuleiro)):
+            for j in range(len(tabuleiro)):
+                posicao = cria_posicao(letras_possiveis[j], i + 1)
+                if verifica_linha_pedras(tabuleiro, posicao, 1, obtem_numero_orbitas(tabuleiro)*2) or verifica_linha_pedras(tabuleiro, posicao, -1, obtem_numero_orbitas(tabuleiro)*2):
+                    return True
+                if len(obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra())) == 0:
+                    return True
     return False
     
 def escolhe_movimento_manual(tabuleiro):
@@ -411,10 +405,8 @@ def escolhe_movimento_manual(tabuleiro):
         if isinstance(posicao, str) and eh_posicao_valida(str_para_posicao(posicao), obtem_numero_orbitas(tabuleiro)):
             if obtem_pedra(tabuleiro, str_para_posicao(posicao)) == 0:
                 return f'{posicao}'
-            else:
-                return escolhe_movimento_manual(tabuleiro)   # Se a posição não estiver livre, solicita novamente
-        else:
-            return escolhe_movimento_manual(tabuleiro)   # Se a posição não for válida, solicita novamente
+            
+    return escolhe_movimento_manual(tabuleiro)   # Se a posição não for válida, solicita novamente
 
 def escolhe_movimento_auto(tabuleiro, pedra, lvl):
     if eh_tabuleiro(tabuleiro) and eh_pedra_jogador(pedra) and isinstance(lvl, str):
@@ -426,7 +418,6 @@ def escolhe_movimento_auto(tabuleiro, pedra, lvl):
         
 def estratégia_facil(tabuleiro, pedra):
     posicoes_validas = ()
-    posicoes_totais = []
     pedras = obtem_posicoes_pedra(tabuleiro, pedra)
     posicoes_livres = obtem_posicoes_pedra(tabuleiro, 0)
     for i in pedras:
@@ -464,7 +455,9 @@ def estratégia_normal(tabuleiro, pedra, k):
         if len(posicoes_maq) != 0:
             return ordena_posicoes(posicoes_maq, obtem_numero_orbitas(tabuleiro))[0]  
         if len(posicoes_adv) != 0:
-            return ordena_posicoes(posicoes_adv, obtem_numero_orbitas(tabuleiro))[0] 
+            return ordena_posicoes(posicoes_adv, obtem_numero_orbitas(tabuleiro))[0]
+        
+    return ordena_posicoes(obtem_posicoes_pedra(tabuleiro, 0), obtem_numero_orbitas(tabuleiro))[0]
         
 def orbito(orb, lvl, pedra_str):
     if isinstance(orb, int) and isinstance(pedra_str, str) and isinstance(lvl, str):
@@ -541,16 +534,13 @@ def multiplayer(tabuleiro, pedra):
         valor = -valor
         
     if eh_vencedor(tabuleiro, pedra):
-        print(f"VITORIA DO JOGADOR '{pedra_para_str(pedra)}'.")
+        print(f"VITORIA DO JOGADOR '{pedra_para_str(pedra)}'")
         return pedra
     if eh_vencedor(tabuleiro, -pedra):
-        print(F"VITORIA DO JOGADOR '{pedra_para_str(-pedra)}'.")
+        print(F"VITORIA DO JOGADOR '{pedra_para_str(-pedra)}'")
         return -pedra
+    
     print("EMPATE")
     return 0
 
-#print(orbito(2, "2jogadores", "X"))
-tab = cria_tabuleiro_vazio(2)
-cria_tabuleiro(2, (str_para_posicao("a1"), str_para_posicao("b2")), (str_para_posicao("a2"), str_para_posicao("b1")))
-print(tab)
-print(estratégia_facil(tab, 1))
+#print(orbito(2, "normal", "X"))
