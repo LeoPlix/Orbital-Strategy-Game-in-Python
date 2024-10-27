@@ -143,40 +143,42 @@ def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
     raise ValueError('cria_tabuleiro: argumentos invalidos')
 
 def cria_copia_tabuleiro(tabuleiro):
-    if eh_tabuleiro(tabuleiro):
-        return [[tabuleiro[i][j] for j in range(len(tabuleiro[i]))] for i in range(len(tabuleiro))]
+    return [[tabuleiro[i][j] for j in range(len(tabuleiro[i]))] for i in range(len(tabuleiro))]
 
 def obtem_numero_orbitas(tabuleiro):
     return len(tabuleiro) // 2
 
-def obtem_pedra(tabuleiro, pedra):
-    linha = obtem_pos_lin(pedra) - 1
-    coluna = letras_possiveis.index(obtem_pos_col(pedra))
-    return tabuleiro[linha][coluna]
-    
+def obtem_pedra(tabuleiro, posicao):
+    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
+        linha = obtem_pos_lin(posicao) - 1
+        coluna = letras_possiveis.index(obtem_pos_col(posicao))
+        return tabuleiro[linha][coluna]
+
 def obtem_linha_horizontal(tabuleiro, posicao):
-    linha = posicao[1]
-    linha_index = linha - 1  # Convert row number to index
-    linha_horizontal = []
-    
-    for i in range(len(tabuleiro[linha_index])):
-        pos = cria_posicao(letras_possiveis[i], linha)
-        pedra = tabuleiro[linha_index][i]
-        linha_horizontal.append((pos, pedra))
-    
-    return tuple(linha_horizontal)
+    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
+        linha = posicao[1]
+        linha_index = linha - 1  # Convert row number to index
+        linha_horizontal = []
+        
+        for i in range(len(tabuleiro[linha_index])):
+            pos = cria_posicao(letras_possiveis[i], linha)
+            pedra = tabuleiro[linha_index][i]
+            linha_horizontal.append((pos, pedra))
+        
+        return tuple(linha_horizontal)
 
 def obtem_linha_vertical(tabuleiro, posicao):
-    coluna = obtem_pos_col(posicao)
-    coluna_index = letras_possiveis.index(coluna)  # Convert column letter to index
-    linha_vertical = []
-    
-    for i in range(len(tabuleiro)):
-        pos = cria_posicao(coluna, i + 1)
-        pedra = tabuleiro[i][coluna_index]
-        linha_vertical.append((pos, pedra))
-    
-    return tuple(linha_vertical)
+    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
+        coluna = obtem_pos_col(posicao)
+        coluna_index = letras_possiveis.index(coluna)  # Convert column letter to index
+        linha_vertical = []
+        
+        for i in range(len(tabuleiro)):
+            pos = cria_posicao(coluna, i + 1)
+            pedra = tabuleiro[i][coluna_index]
+            linha_vertical.append((pos, pedra))
+        
+        return tuple(linha_vertical)
 
 def ordenar_diagonais(diagonal, tipo):
     if tipo == 'diagonal':
@@ -187,56 +189,58 @@ def ordenar_diagonais(diagonal, tipo):
         return sorted(diagonal, key=lambda pos: (-obtem_pos_lin(pos[0]), letras_possiveis.index(obtem_pos_col(pos[0]))))
     
 def obtem_linhas_diagonais(tabuleiro, posicao):
-    diagonal = []
-    antidiagonal = []
-      # Índice da linha (convertendo para índice 0)
-    
-    def fazer_diagonais():
-        col_index = letras_possiveis.index(obtem_pos_col(posicao))  # Índice da coluna
-        lin_index = obtem_pos_lin(posicao) - 1
-    # Diagonal principal (descendente da esquerda para a direita)
-        i, j = lin_index, col_index
-        while i >= 0 and j >= 0:  # Percorre diagonal acima/esquerda
-            diagonal.append((cria_posicao(letras_possiveis[j], i+1), tabuleiro[i][j]))
-            i -= 1
-            j -= 1
-        i, j = lin_index + 1, col_index + 1
-        while i < len(tabuleiro) and j < len(tabuleiro):  # Percorre diagonal abaixo/direita
-            diagonal.append((cria_posicao(letras_possiveis[j], i+1), tabuleiro[i][j]))
-            i += 1
-            j += 1
-        return diagonal
-    
-    def fazer_antidiagonais():
-        col_index = letras_possiveis.index(obtem_pos_col(posicao))  # Índice da coluna
-        lin_index = obtem_pos_lin(posicao) - 1
-    # Antidiagonal (ascendente da esquerda para a direita)
-        i, j = lin_index, col_index
-        while i >= 0 and j < len(tabuleiro):  # Percorre antidiagonal acima/direita
-            antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
-            i -= 1
-            j += 1
-        i, j = lin_index + 1, col_index - 1
-        while i < len(tabuleiro) and j >= 0:  # Percorre antidiagonal abaixo/esquerda
-            antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
-            i += 1
-            j -= 1
-            
-        return antidiagonal
-    
-    diagonal = fazer_diagonais()
-    antidiagonal = fazer_antidiagonais()
-    # Ordenar e retornar as diagonais
-    return tuple(ordenar_diagonais(diagonal, "diagonal")), tuple(ordenar_diagonais(antidiagonal, "antidiagonal"))
+    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
+        diagonal = []
+        antidiagonal = []
+        # Índice da linha (convertendo para índice 0)
+        
+        def fazer_diagonais():
+            col_index = letras_possiveis.index(obtem_pos_col(posicao))  # Índice da coluna
+            lin_index = obtem_pos_lin(posicao) - 1
+        # Diagonal principal (descendente da esquerda para a direita)
+            i, j = lin_index, col_index
+            while i >= 0 and j >= 0:  # Percorre diagonal acima/esquerda
+                diagonal.append((cria_posicao(letras_possiveis[j], i+1), tabuleiro[i][j]))
+                i -= 1
+                j -= 1
+            i, j = lin_index + 1, col_index + 1
+            while i < len(tabuleiro) and j < len(tabuleiro):  # Percorre diagonal abaixo/direita
+                diagonal.append((cria_posicao(letras_possiveis[j], i+1), tabuleiro[i][j]))
+                i += 1
+                j += 1
+            return diagonal
+        
+        def fazer_antidiagonais():
+            col_index = letras_possiveis.index(obtem_pos_col(posicao))  # Índice da coluna
+            lin_index = obtem_pos_lin(posicao) - 1
+        # Antidiagonal (ascendente da esquerda para a direita)
+            i, j = lin_index, col_index
+            while i >= 0 and j < len(tabuleiro):  # Percorre antidiagonal acima/direita
+                antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
+                i -= 1
+                j += 1
+            i, j = lin_index + 1, col_index - 1
+            while i < len(tabuleiro) and j >= 0:  # Percorre antidiagonal abaixo/esquerda
+                antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
+                i += 1
+                j -= 1
+                
+            return antidiagonal
+        
+        diagonal = fazer_diagonais()
+        antidiagonal = fazer_antidiagonais()
+        # Ordenar e retornar as diagonais
+        return tuple(ordenar_diagonais(diagonal, "diagonal")), tuple(ordenar_diagonais(antidiagonal, "antidiagonal"))
     
 
 def obtem_posicoes_pedra(tabuleiro, pedra):
-    posicoes = ()
-    for i in range(len(tabuleiro)):
-        for j in range(len(tabuleiro)):
-            if tabuleiro[i][j] == pedra:
-                posicoes += (cria_posicao(letras_possiveis[j], i + 1),)
-    return tuple(ordena_posicoes(posicoes, obtem_numero_orbitas(tabuleiro)))
+    if eh_pedra(pedra):
+        posicoes = ()
+        for i in range(len(tabuleiro)):
+            for j in range(len(tabuleiro)):
+                if tabuleiro[i][j] == pedra:
+                    posicoes += (cria_posicao(letras_possiveis[j], i + 1),)
+        return tuple(ordena_posicoes(posicoes, obtem_numero_orbitas(tabuleiro)))
 
 def coloca_pedra(tabuleiro, posicao, pedra):
     if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra(pedra):
@@ -264,25 +268,26 @@ def eh_tabuleiro(arg):
     return False
 
 def tabuleiros_iguais(tabuleiro1, tabuleiro2):
-    return tabuleiro1 == tabuleiro2
+    if eh_tabuleiro(tabuleiro1) and eh_tabuleiro(tabuleiro2):
+        return tabuleiro1 == tabuleiro2
 
 def tabuleiro_para_str(tabuleiro):
-    n = len(tabuleiro)
-    string = " "
-    for i in range(obtem_numero_orbitas(tabuleiro)*2):
-        string += "   " + letras_possiveis[i] 
-    for i in range(len(tabuleiro)):
-        if i+1 < 10:
-            string += "\n" + "0" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"
-        else:
-            string += "\n" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"
-        for j in range(len(tabuleiro)-1):
-            string += f"-[{pedra_para_str(tabuleiro[i][j+1])}]"
-          
-        if i < len(tabuleiro) - 1:  
-            string += "\n" + "    |" + "   |"*(len(tabuleiro)-1)
-              
-    return string
+    if eh_tabuleiro(tabuleiro):
+        string = " "
+        for i in range(obtem_numero_orbitas(tabuleiro)*2):
+            string += "   " + letras_possiveis[i] 
+        for i in range(len(tabuleiro)):
+            if i+1 < 10:
+                string += "\n" + "0" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"
+            else:
+                string += "\n" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"
+            for j in range(len(tabuleiro)-1):
+                string += f"-[{pedra_para_str(tabuleiro[i][j+1])}]"
+            
+            if i < len(tabuleiro) - 1:  
+                string += "\n" + "    |" + "   |"*(len(tabuleiro)-1)
+                
+        return string
 
 def move_pedra(tabuleiro, p1, p2):
     if eh_tabuleiro(tabuleiro) and eh_posicao_valida(p1, obtem_numero_orbitas(tabuleiro)) and eh_posicao_valida(p2, obtem_numero_orbitas(tabuleiro)):
@@ -395,14 +400,15 @@ def eh_fim_jogo(tabuleiro):
                 posicao = cria_posicao(letras_possiveis[j], i + 1)
                 if verifica_linha_pedras(tabuleiro, posicao, 1, obtem_numero_orbitas(tabuleiro)*2) or verifica_linha_pedras(tabuleiro, posicao, -1, obtem_numero_orbitas(tabuleiro)*2):
                     return True
-                if len(obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra())) == 0:
-                    return True
+        if len(obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra())) == 0:
+            return True
     return False
     
 def escolhe_movimento_manual(tabuleiro):
     if eh_tabuleiro(tabuleiro):
-        posicao = input("Escolha uma posicao livre:")# Solicita ao jogador que escolha uma posição livre
-        if isinstance(posicao, str) and eh_posicao_valida(str_para_posicao(posicao), obtem_numero_orbitas(tabuleiro)):
+        posicao = input("Escolha uma posicao livre:")
+        posicao_convertida = str_para_posicao(posicao)# Solicita ao jogador que escolha uma posição livre
+        if isinstance(posicao, str) and posicao_convertida and eh_posicao_valida(posicao_convertida, obtem_numero_orbitas(tabuleiro)):
             if obtem_pedra(tabuleiro, str_para_posicao(posicao)) == 0:
                 return f'{posicao}'
             
@@ -421,18 +427,18 @@ def estratégia_facil(tabuleiro, pedra):
     roda_tabuleiro(tabuleiro_copia)
     posicoes_originais = ()
     pedras = obtem_posicoes_pedra(tabuleiro, pedra)
-    posicoes_livres = obtem_posicoes_pedra(tabuleiro, 0)
+    posicoes_livres = obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra())
     
     for i in pedras:
         posicao_seguinte = obtem_posicao_seguinte(tabuleiro, i, False)
-        for adj in obtem_posicoes_adjacentes(posicao_seguinte, 2, True):
+        for adj in obtem_posicoes_adjacentes(posicao_seguinte, obtem_numero_orbitas(tabuleiro), True):
             if obtem_pedra(tabuleiro_copia, adj) == 0:
                 posicoes_originais += (obtem_posicao_seguinte(tabuleiro, adj, True),)
                 
     if len(posicoes_originais) != 0:
         return ordena_posicoes(posicoes_originais, obtem_numero_orbitas(tabuleiro))[0]
-    
-    return ordena_posicoes(posicoes_livres, obtem_numero_orbitas(tabuleiro))[0]
+    if len(posicoes_livres) != 0:
+        return ordena_posicoes(posicoes_livres, obtem_numero_orbitas(tabuleiro))[0]
 
 def estratégia_normal(tabuleiro, pedra, k):
     posicoes_maq = ()
@@ -509,13 +515,13 @@ def resto_singleplayer(tabuleiro, pedra, valor, lvl):
         
         pedra = -pedra
     
-    if eh_vencedor(tabuleiro, valor):  # Verifica se a máquina ganhou/humano perdeu
+    if eh_vencedor(tabuleiro, pedra):  # Verifica se a máquina ganhou/humano perdeu
         print("VITORIA")
-        return valor
+        return pedra
     
-    elif eh_vencedor(tabuleiro, -valor):
+    elif eh_vencedor(tabuleiro, -pedra):
         print("DERROTA")
-        return -valor
+        return -pedra
     
     print("EMPATE")
     return 0
