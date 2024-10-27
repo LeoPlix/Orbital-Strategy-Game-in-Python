@@ -122,23 +122,23 @@ def cria_tabuleiro_vazio(n):
     raise ValueError('cria_tabuleiro_vazio: argumento invalido')
 
 def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
-    if isinstance(n, int) and 2<=n<=5 and isinstance(tuplo_pretas, tuple) and isinstance(tuplo_brancas, tuple):
-        tabuleiro = cria_tabuleiro_vazio(n)
-        for posicao in tuplo_pretas:
-            if not eh_posicao_valida(posicao, n):
-                raise ValueError('cria_tabuleiro: argumentos invalidos')
-            linha = obtem_pos_lin(posicao) - 1
-            coluna = letras_possiveis.index(obtem_pos_col(posicao))
-            tabuleiro[linha][coluna] = cria_pedra_preta()
+    if type(tuplo_pretas) == tuple and type(tuplo_brancas) == tuple and 2<=n<=5:
+            tabuleiro = cria_tabuleiro_vazio(n)
+            for posicao in tuplo_pretas:
+                if not eh_posicao_valida(posicao, n) or posicao in tuplo_brancas:
+                    raise ValueError('cria_tabuleiro: argumentos invalidos')
+                linha = obtem_pos_lin(posicao) - 1
+                coluna = letras_possiveis.index(obtem_pos_col(posicao))
+                tabuleiro[linha][coluna] = cria_pedra_preta()
+                
+            for posicao in tuplo_brancas:
+                if not eh_posicao_valida(posicao, n) or posicao in tuplo_pretas:
+                    raise ValueError('cria_tabuleiro: argumentos invalidos')
+                linha = obtem_pos_lin(posicao) - 1  # Converte linha para índice de 0 a n-1
+                coluna = letras_possiveis.index(obtem_pos_col(posicao))  # Converte coluna para índice
+                tabuleiro[linha][coluna] = cria_pedra_branca()  # Marca a pedra branca na posição correta
             
-        for posicao in tuplo_brancas:
-            if not eh_posicao_valida(posicao, n):
-                raise ValueError('cria_tabuleiro: argumentos invalidos')
-            linha = obtem_pos_lin(posicao) - 1  # Converte linha para índice de 0 a n-1
-            coluna = letras_possiveis.index(obtem_pos_col(posicao))  # Converte coluna para índice
-            tabuleiro[linha][coluna] = cria_pedra_branca()  # Marca a pedra branca na posição correta
-        
-        return tabuleiro
+            return tabuleiro
     
     raise ValueError('cria_tabuleiro: argumentos invalidos')
 
@@ -415,21 +415,24 @@ def escolhe_movimento_auto(tabuleiro, pedra, lvl):
                 return estratégia_facil(tabuleiro, pedra)
             elif lvl == "normal":
                 return estratégia_normal(tabuleiro, pedra, obtem_numero_orbitas(tabuleiro)*2)
-        
+
 def estratégia_facil(tabuleiro, pedra):
-    posicoes_validas = ()
+    tabuleiro_copia = cria_copia_tabuleiro(tabuleiro)
+    roda_tabuleiro(tabuleiro_copia)
+    posicoes_originais = ()
     pedras = obtem_posicoes_pedra(tabuleiro, pedra)
     posicoes_livres = obtem_posicoes_pedra(tabuleiro, 0)
+    
     for i in pedras:
-        for adj in obtem_posicoes_adjacentes(i, 2, True):
-            if obtem_pedra(tabuleiro, adj) == 0:
-                posicoes_validas += (adj, )
-
-    if len(posicoes_validas) != 0:
-        return ordena_posicoes(posicoes_validas, obtem_numero_orbitas(tabuleiro))[0]
+        posicao_seguinte = obtem_posicao_seguinte(tabuleiro, i, False)
+        for adj in obtem_posicoes_adjacentes(posicao_seguinte, 2, True):
+            if obtem_pedra(tabuleiro_copia, adj) == 0:
+                posicoes_originais += (obtem_posicao_seguinte(tabuleiro, adj, True),)
+                
+    if len(posicoes_originais) != 0:
+        return ordena_posicoes(posicoes_originais, obtem_numero_orbitas(tabuleiro))[0]
     
     return ordena_posicoes(posicoes_livres, obtem_numero_orbitas(tabuleiro))[0]
-    
 
 def estratégia_normal(tabuleiro, pedra, k):
     posicoes_maq = ()
