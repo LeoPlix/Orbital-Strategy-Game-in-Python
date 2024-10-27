@@ -124,18 +124,29 @@ def cria_tabuleiro_vazio(n):
     raise ValueError('cria_tabuleiro_vazio: argumento invalido')
 
 def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
-    tabuleiro = cria_tabuleiro_vazio(n)
-    for posicao in tuplo_pretas:
-        linha = obtem_pos_lin(posicao) - 1
-        coluna = letras_possiveis.index(obtem_pos_col(posicao))
-        tabuleiro[linha][coluna] = 1 
+    if isinstance(n, int) and 2<=n<=5 and isinstance(tuplo_pretas, tuple) and isinstance(tuplo_brancas, tuple):
+        for i in tuplo_pretas:
+            if not eh_posicao(i):
+                raise ValueError('cria_tabuleiro: argumentos invalidos')
+            
+        for j in tuplo_brancas:
+            if not eh_posicao(j):
+                raise ValueError('cria_tabuleiro: argumentos invalidos')
+            
+        tabuleiro = cria_tabuleiro_vazio(n)
+        for posicao in tuplo_pretas:
+            linha = obtem_pos_lin(posicao) - 1
+            coluna = letras_possiveis.index(obtem_pos_col(posicao))
+            tabuleiro[linha][coluna] = 1 
+            
+        for posicao in tuplo_brancas:
+            linha = obtem_pos_lin(posicao) - 1  # Converte linha para índice de 0 a n-1
+            coluna = letras_possiveis.index(obtem_pos_col(posicao))  # Converte coluna para índice
+            tabuleiro[linha][coluna] = -1  # Marca a pedra branca na posição correta
         
-    for posicao in tuplo_brancas:
-        linha = obtem_pos_lin(posicao) - 1  # Converte linha para índice de 0 a n-1
-        coluna = letras_possiveis.index(obtem_pos_col(posicao))  # Converte coluna para índice
-        tabuleiro[linha][coluna] = -1  # Marca a pedra branca na posição correta
+        return tabuleiro
     
-    return tabuleiro
+    raise ValueError('cria_tabuleiro: argumentos invalidos')
 
 def cria_copia_tabuleiro(tabuleiro):
     if eh_tabuleiro(tabuleiro):
@@ -403,10 +414,11 @@ def escolhe_movimento_manual(tabuleiro):
 
 def escolhe_movimento_auto(tabuleiro, pedra, lvl):
     if eh_tabuleiro(tabuleiro) and eh_pedra_jogador(pedra) and isinstance(lvl, str):
-        if lvl == "facil":
-            return estratégia_facil(tabuleiro, pedra)
-        elif lvl == "normal":
-            return estratégia_normal(tabuleiro, pedra, obtem_numero_orbitas(tabuleiro)*2)
+        if lvl in ("facil", "normal"):
+            if lvl == "facil":
+                return estratégia_facil(tabuleiro, pedra)
+            elif lvl == "normal":
+                return estratégia_normal(tabuleiro, pedra, obtem_numero_orbitas(tabuleiro)*2)
         
 def estratégia_facil(tabuleiro, pedra):
     posicoes_validas = ()
@@ -456,13 +468,14 @@ def estratégia_normal(tabuleiro, pedra, k):
             return ordena_posicoes(posicoes_adv, obtem_numero_orbitas(tabuleiro))[0] 
         
 def orbito(orb, lvl, pedra_str):
-    if isinstance(orb, int) and isinstance(pedra_str, str) and lvl in ("facil", "normal", '2jogadores'):
-        if 2<=orb<=5 and pedra_str in ("X", "O"):
+    if isinstance(orb, int) and isinstance(pedra_str, str) and isinstance(lvl, str):
+        if 2<=orb<=5 and pedra_str in ("X", "O") and lvl in ("facil", "normal","2jogadores"):
             tabuleiro_vazio = cria_tabuleiro_vazio(orb)
-            print(f"Bem-vindo ao ORBITO-{orb}!")
+            print(f"Bem-vindo ao ORBITO-{orb}.")
             if lvl in ("facil", "normal"):
                 return singleplayer(tabuleiro_vazio, pedra_str, lvl)
-            #return multiplayer(tabuleiro_vazio)
+            else:
+                return multiplayer(tabuleiro_vazio)
     raise ValueError('orbito: argumentos invalidos')
 
 def singleplayer(tabuleiro, pedra, lvl):
@@ -490,7 +503,7 @@ def resto_singleplayer(tabuleiro, pedra, valor, lvl):
                 break
             
         if pedra == cria_pedra_branca():
-            jogada_maquina = escolhe_movimento_auto(tabuleiro, valor, lvl)
+            jogada_maquina = escolhe_movimento_auto(tabuleiro, -valor, lvl)
             coloca_pedra(tabuleiro, jogada_maquina, -valor)
             print(f"Turno do computador ({lvl}):")
             roda_tabuleiro(tabuleiro) 
@@ -502,7 +515,7 @@ def resto_singleplayer(tabuleiro, pedra, valor, lvl):
         pedra = -pedra
     
     if eh_vencedor(tabuleiro, valor):  # Verifica se a máquina ganhou/humano perdeu
-        print("VITÓRIA")
+        print("VITORIA")
         return valor
     
     elif eh_vencedor(tabuleiro, -valor):
@@ -512,4 +525,8 @@ def resto_singleplayer(tabuleiro, pedra, valor, lvl):
     else:
         print("EMPATE")
         return 0
+
+def multiplayer(tabuleiro):
+    print("Jogo para dois jogadores.")
+    print(tabuleiro_para_str(tabuleiro))
 
