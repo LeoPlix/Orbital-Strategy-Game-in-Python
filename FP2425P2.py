@@ -7,6 +7,8 @@ def cria_posicao(letra, num):
     Função que cria a posição com um formato imutável e hashable.
     Recebe como input uma letra correspondente à coluna e um número correspondente à linha.
     Retorna um tuplo com a letra no indice 0 e o número no indice 1.
+    O argumento é do tipo str e int.
+    É retornado um argumento do tipo tuple.
     cria posicao: str x int → posicao
     """
     if isinstance(letra, str) and isinstance(num, int):
@@ -19,6 +21,8 @@ def obtem_pos_col(posicao):
     """
     Função que retorna a coluna da posição.
     Recebe o tuplo da posição e retorna o elemento de indice 0 do mesmo.
+    O argumento é do tipo tuple.
+    É retornado um argumento do tipo str.
     posicao → str   
     """
     return posicao[0]
@@ -27,6 +31,8 @@ def obtem_pos_lin(posicao):
     """
     Função que retorna a linha da posição.
     Recebe o tuplo da posição e retorna o elemento de indice 1 do mesmo.
+    O argumento é do tipo tuple.
+    É retornado um argumento do tipo int.
     posicao → int
     """
     return posicao[1]
@@ -37,6 +43,8 @@ def eh_posicao(arg):
     Função que verifica se o argumento é uma posição.
     Recebe um argumento e verifica se é um tuplo com 2 elementos, sendo o primeiro uma letra e o segundo um número.
     Retorna True se for uma posição e False caso contrário.
+    O argumento é do tipo universal.
+    É retornado um argumento do tipo boolean.
     universal → bool
     """
     return isinstance(arg, tuple) and len(arg) == 2 and isinstance(arg[0], str) and isinstance(arg[1], int) and arg[0] in letras_possiveis and arg[1] in range(1,11)
@@ -46,6 +54,8 @@ def posicoes_iguais(pos1, pos2):
     """
     Função que verifica se duas posições são iguais.
     Recebe duas posições e retorna um valor booleano True se forem iguais e False caso contrário.
+    Os argumentos são do tipo tuple.
+    É retornado um argumento do tipo bool.
     posicao x posicao → bool
     """
     return pos1 == pos2
@@ -55,6 +65,8 @@ def posicao_para_str(pos):
     """ 
     Função que converte uma posição para string.
     Recebe uma posição e retorna uma string com a letra e o número da posição.
+    O argumento é do tipo tuple.
+    É retornado um argumento do tipo str.
     posicao → str
     """
     return pos[0] + str(pos[1])
@@ -63,6 +75,8 @@ def str_para_posicao(s):
     """
     Função que converte uma string para uma posição.
     Recebe uma string com a letra e o número e retorna uma posição.
+    O argumento é do tipo str.
+    É retornado um argumento do tipo tuple.
     str → posicao   
     """
     if isinstance(s, str) and len(s) == 2 and s[0] in letras_possiveis and s[1].isdigit() in range(1,10):
@@ -74,6 +88,8 @@ def str_para_posicao(s):
 def eh_posicao_valida(posicao, n):
     """ 
     Função que verifica se uma posição é válida dentro dos parametros do tabuleiro tendo em conta o número de orbitas.
+    Os argumentos são do tipo tuple e int, respetivamente.
+    É retornado um argumento do tipo bool.
     posição x int → bool
     """
     if eh_posicao(posicao):
@@ -84,6 +100,8 @@ def obtem_posicoes_adjacentes(posicao, n, d):
     """ 
     Função que retorna as posições adjacentes a uma dada posição de um tabuleiro com determinado número de órbitas.
     Caso d seja True, retorna todas as adjacentes. Caso contrário, retorna apenas as ortogonais.
+    Os argumentos são do tipo tuple, int e bool, respetivamente.
+    É retornado um argumento do tipo tuple.
     posicao x int x bool → tuplo de posicoes
     """
     col = obtem_pos_col(posicao)  #obter coluna da posição
@@ -107,6 +125,8 @@ def ordena_posicoes(posicoes, n):
     Função que ordena as posições de acordo com a ordem específica de leitura do tabuleiro de Orbito.
     Calcula a distância máxima entre a posição e o centro do tabuleiro, usando valores numéricos para as colunas e linhas.
     Utiliza o 0.5 para calcular a distância ao centro de uma forma mais especifica.
+    Os argumentos são do tipo tuple e int, respetivamente.
+    É retornado um argumento do tipo tuple.
     posição x int → tuplo de posicoes
     """
     colunas = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7, 'h': 8, 'i': 9, 'j': 10}
@@ -118,6 +138,7 @@ def ordena_posicoes(posicoes, n):
 def cria_pedra_branca():
     """ 
     Função que cria uma pedra branca, representada por -1.
+    É retornado um argumento do tipo int.
     {} → pedra
     """
     return -1  
@@ -125,6 +146,7 @@ def cria_pedra_branca():
 def cria_pedra_preta():
     """
     Função que cria uma pedra preta, representada por 1.
+    É retornado um argumento do tipo int.
     {} → pedra
     """
     return 1
@@ -132,6 +154,7 @@ def cria_pedra_preta():
 def cria_pedra_neutra():
     """
     Função que cria uma pedra neutra, representada por 0.
+    É retornado um argumento do tipo int.
     {} → pedra
     """
     return 0
@@ -140,6 +163,8 @@ def cria_pedra_neutra():
 def eh_pedra(arg):
     """ 
     Função que verifica se o argumento é uma pedra.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo bool.
     universal → bool
     """
     return arg in (cria_pedra_preta(), cria_pedra_branca(), cria_pedra_neutra())
@@ -147,6 +172,8 @@ def eh_pedra(arg):
 def eh_pedra_branca(pedra):
     """ 
     Função que verifica se o argumento é uma pedra branca.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo bool.
     pedra → bool
     """
     return pedra == cria_pedra_branca() or pedra == pedra_para_str(cria_pedra_branca())
@@ -154,6 +181,8 @@ def eh_pedra_branca(pedra):
 def eh_pedra_preta(pedra):
     """ 
     Função que verifica se o argumento é uma pedra preta.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo bool.
     pedra → bool
     """
     return pedra == cria_pedra_preta() or pedra == pedra_para_str(cria_pedra_preta())
@@ -162,6 +191,8 @@ def eh_pedra_preta(pedra):
 def pedras_iguais(pedra1, pedra2):
     """  
     Verifica se duas pedras são iguais.
+    Os argumentos são do tipo int.
+    É retornado um argumento do tipo bool.
     universal x universal → bool
     """
     return pedra1 == pedra2
@@ -170,6 +201,8 @@ def pedras_iguais(pedra1, pedra2):
 def pedra_para_str(pedra):
     """ 
     Função que converte uma pedra para string.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo str.
     pedra → str
     """
     if pedra == cria_pedra_branca():
@@ -183,6 +216,8 @@ def pedra_para_str(pedra):
 def eh_pedra_jogador(pedra):
     """ 
     Função que verifica se a pedra é de um jogador, ou seja, não neutra.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo bool.
     pedra → bool
     """
     if eh_pedra(pedra):
@@ -191,6 +226,8 @@ def eh_pedra_jogador(pedra):
 def pedra_para_int(pedra):
     """  
     Função que converte uma pedra para um inteiro corresponde aos valores que lhes são atribuídos.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo int.
     pedra → int
     """
     if eh_pedra_branca(pedra):
@@ -204,6 +241,8 @@ def pedra_para_int(pedra):
 def cria_tabuleiro_vazio(n):
     """ 
     Função que cria um tabuleiro vazio com um número de órbitas n.
+    O argumento é do tipo int.
+    É retornado um argumento do tipo list.
     int → tabuleiro
     """
     if 2<=n<=5 and isinstance(n, int):
@@ -214,6 +253,8 @@ def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
     """ 
     Função que cria um tabuleiro com um número de órbitas n, com pedras pretas e brancas nas posições indicadas.
     Verifica e chama uma exceção caso as posições não sejam válidas.
+    Os argumentos são do tipo int e tuplo.
+    É retornado um argumento do tipo list.
     int x tuplo x tuplo → tabuleiro
     """
     if type(tuplo_pretas) == tuple and type(tuplo_brancas) == tuple and 2<=n<=5:
@@ -239,6 +280,8 @@ def cria_tabuleiro(n, tuplo_pretas, tuplo_brancas):
 def cria_copia_tabuleiro(tabuleiro):
     """
     Faz uma cópia do tabuleiro, de modo a não modificar o tabuleiro original.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo list.
     tabuleiro → tabuleiro
     """
     return [[tabuleiro[i][j] for j in range(obtem_numero_orbitas(tabuleiro)*2)] for i in range(obtem_numero_orbitas(tabuleiro)*2)]
@@ -247,6 +290,8 @@ def cria_copia_tabuleiro(tabuleiro):
 def obtem_numero_orbitas(tabuleiro):
     """
     Função que retorna o número de órbitas do tabuleiro.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo int.
     tabuleiro → int
     """
     contador = 0
@@ -257,6 +302,8 @@ def obtem_numero_orbitas(tabuleiro):
 def obtem_pedra(tabuleiro, posicao):
     """ 
     Função que retorna a pedra numa dada posição do tabuleiro.
+    Os argumentos são do tipo list e tuple.
+    É retornado um argumento do tipo int.
     tabuleiro x posicao → pedra
     """
     linha = obtem_pos_lin(posicao) - 1   #Determina a linha
@@ -266,6 +313,8 @@ def obtem_pedra(tabuleiro, posicao):
 def obtem_linha_horizontal(tabuleiro, posicao):
     """ 
     Função que retorna a linha horizontal da posição.
+    Os argumentos são do tipo list e tuple.
+    É retornado um argumento do tipo tuple.
     tabuleiro x posicao → tuplo de posicoes
     """
     linha = posicao[1]
@@ -282,6 +331,8 @@ def obtem_linha_horizontal(tabuleiro, posicao):
 def obtem_linha_vertical(tabuleiro, posicao):
     """ 
     Função que retorna a linha vertical da posição.
+    Os argumentos são do tipo list e tuple.
+    É retornado um argumento do tipo tuple.
     tabuleiro x posicao → tuplo de posicoes
     """
     coluna = obtem_pos_col(posicao)
@@ -298,6 +349,8 @@ def obtem_linha_vertical(tabuleiro, posicao):
 def ordenar_diagonais(diagonal, tipo):
     """ 
     Função auxiliar que ordena as diagonais de acordo com a ordem específica de leitura do tabuleiro de Orbito.
+    Os argumentos são do tipo list e str, respetivamente.
+    É retornado um argumento do tipo list.
     diagonal x str → diagonal
     """
     if tipo == 'diagonal':
@@ -310,6 +363,8 @@ def obtem_linhas_diagonais(tabuleiro, posicao):
         Função que retorna as diagonais da posição.
         Retorna um tuplo com subtuplos correspondentes às diagonais principal e antidiagonal, que são previamente ordenadas com
         uma função auxiliar, a principal de frente para trás e a antidiagonal de trás para a frente.
+        Os argumentos são do tipo list e tuple.
+        É retornado um argumento do tipo tuple.
         tabuleiro x posicao → tuplo de posicoes
         """
 
@@ -358,6 +413,8 @@ def obtem_linhas_diagonais(tabuleiro, posicao):
 def obtem_posicoes_pedra(tabuleiro, pedra):
     """ 
     Função que retorna as posições de uma dada pedra no tabuleiro.
+    Os argumentos são do tipo list e int, respetivamente.
+    É retornado um argumento do tipo tuple.
     tabuleiro x pedra → tuplo de posicoes
     """
     posicoes = ()
@@ -371,6 +428,8 @@ def obtem_posicoes_pedra(tabuleiro, pedra):
 def coloca_pedra(tabuleiro, posicao, pedra):
     """ 
     Função que coloca uma pedra numa dada posição do tabuleiro, modificando destrutivamente o tabuleiro original.
+    Os argumentos são do tipo list e tuple.
+    É retornado um argumento do tipo list.
     tabuleiro x posicao x pedra → tabuleiro
     """
     linha = obtem_pos_lin(posicao) - 1
@@ -381,6 +440,8 @@ def coloca_pedra(tabuleiro, posicao, pedra):
 def remove_pedra(tabuleiro, posicao):
     """ 
     Função que remove uma pedra de uma dada posição do tabuleiro, modificando destrutivamente o tabuleiro original.
+    O argumento é do tipo list e tuple.
+    É retornado um argumento do tipo list.
     tabuleiro x posicao → tabuleiro
     """
     linha = obtem_pos_lin(posicao) - 1
@@ -392,6 +453,8 @@ def remove_pedra(tabuleiro, posicao):
 def eh_tabuleiro(arg):
     """ 
     Função que verifica se o argumento é um tabuleiro.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo boolean.
     universal → bool
     """
     if isinstance(arg, list):  #Verifica se é uma lista
@@ -411,6 +474,8 @@ def eh_tabuleiro(arg):
 def tabuleiros_iguais(tabuleiro1, tabuleiro2):
     """ 
     Função que verifica se dois tabuleiros são iguais.
+    Os argumentos são do tipo list.
+    É retornado um argumento do tipo boolean.
     tabuleiro x tabuleiro → bool
     """
     return tabuleiro1 == tabuleiro2
@@ -419,6 +484,8 @@ def tabuleiros_iguais(tabuleiro1, tabuleiro2):
 def tabuleiro_para_str(tabuleiro):
     """ 
     Função que converte um tabuleiro para string para efeitos de aplicar mais tarde.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo str.
     tabuleiro → str
     """
     string = " " #String vazia porque o tabuleiro começa com um espaço
@@ -441,6 +508,8 @@ def tabuleiro_para_str(tabuleiro):
 def move_pedra(tabuleiro, p1, p2):
     """ 
     Função que move uma pedra de uma posição para outra, modificando destrutivamente o tabuleiro original.
+    Os argumentos são do tipo list e tuple.
+    É retornado um argumento do tipo list.
     tabuleiro x posicao x posicao → tabuleiro
     """
     pedra = obtem_pedra(tabuleiro, p1)  #Obtém a pedra da posição inicial
@@ -452,6 +521,8 @@ def obtem_posicao_seguinte(tabuleiro, posicao, d):
     """ 
     Função que retorna a posição seguinte de uma dada posição, num dado sentido, no tabuleiro.
     Caso d seja True, o sentido é horário. Caso contrário, é anti-horário.
+    Os argumentos são do tipo list, tuple e bool, respetivamente.
+    É retornado um argumento do tipo tuple.
     tabuleiro x posicao x bool → posicao
     """
     if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and d in (True, False):
@@ -485,6 +556,9 @@ def obtem_posicao_seguinte(tabuleiro, posicao, d):
 def roda_tabuleiro(tabuleiro):
     """
     Função que roda o tabuleiro no sentido anti-horário.
+    O tabuleiro é modificado destrutivamente.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo list.
     tabuleiro → tabuleiro
     """
     if eh_tabuleiro(tabuleiro):
@@ -509,6 +583,8 @@ def verifica_linha_pedras(tabuleiro, posicao, pedra, k):
     """ 
     Função que verifica se há k pedras consecutivas numa linha, coluna ou diagonal a partir de uma dada posição.
     A função auxiliar conta_consecutivos é utilizada para contar o número de pedras consecutivas.
+    Os argumentos são do tipo list, tuple, int e int, respetivamente.
+    É retornado um argumento do tipo boolean.
     tabuleiro x posicao x pedra x int → bool
     """
     if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra(pedra) and k>0:
@@ -535,6 +611,8 @@ def verifica_linha_pedras(tabuleiro, posicao, pedra, k):
 def conta_consecutivos(tuplo, pedra):
     """ 
     Função auxiliar que conta o número de pedras consecutivas nas posicoes dadas, considerando a posição principal.
+    Os argumentos são do tipo tuplo e int, respetivamente.
+    É retornado um argumento do tipo int.
     tuplo x pedra → int
     """
     contador = 0
@@ -553,6 +631,8 @@ def conta_consecutivos(tuplo, pedra):
 def eh_vencedor(tabuleiro, pedra):
     """ 
     Função que verifica se um jogador é vencedor, ou seja, se tem uma linha (orbitas*2) de pedras consecutivas.
+    Os argumentos são do tipo list e int, respetivamente.
+    É retornado um argumento do tipo boolean.
     tabuleiro x pedra → bool
     """
     if eh_tabuleiro(tabuleiro) and eh_pedra_jogador(pedra):
@@ -566,6 +646,8 @@ def eh_vencedor(tabuleiro, pedra):
 def eh_fim_jogo(tabuleiro):
     """ 
     Função que verifica se o jogo terminou, ou seja, se há um vencedor ou se o tabuleiro está cheio.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo boolean.
     tabuleiro → bool
     """
     if eh_tabuleiro(tabuleiro):
@@ -579,6 +661,8 @@ def eh_fim_jogo(tabuleiro):
 def escolhe_movimento_manual(tabuleiro):
     """ 
     Função que solicita ao jogador uma posição livre para colocar uma pedra e verifica se a mesma é possível.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo str.
     tabuleiro → str
     """
     posicao_valida = False
@@ -590,6 +674,8 @@ def escolhe_movimento_manual(tabuleiro):
 def escolhe_movimdnto_manual(tabuleiro):
     """ 
     Função que solicita ao jogador uma posição livre para colocar uma pedra e verifica se a mesma é possível.
+    O argumento é do tipo list.
+    É retornado um argumento do tipo str.
     tabuleiro → str
     """
     if eh_tabuleiro(tabuleiro):
@@ -604,6 +690,8 @@ def escolhe_movimdnto_manual(tabuleiro):
 def escolhe_movimento_auto(tabuleiro, pedra, lvl):
     """ 
     Função que escolhe um movimento automático para o computador, de acordo com o nível de dificuldade escolhido.
+    Os argumentos são do tipo list, int e str, respetivamente.
+    É retornado um argumento do tipo str.
     tabuleiro x pedra x str → str
     """
     if eh_tabuleiro(tabuleiro) and eh_pedra_jogador(pedra) and isinstance(lvl, str):
@@ -616,8 +704,10 @@ def escolhe_movimento_auto(tabuleiro, pedra, lvl):
 def estratégia_facil(tabuleiro, pedra):
     """ 
     Função que escolhe um movimento automático para o computador, de acordo com o nível de dificuldade fácil.
-    Se existir no tabuleiro pelo menos uma posi¸c˜ao livre que no fim do turno (após rotação) fique adjacente a uma pedra própria, jogar numa dessas posições;
+    Se existir no tabuleiro pelo menos uma posição livre que no fim do turno (após rotação) fique adjacente a uma pedra própria, jogar numa dessas posições;
     Se não, jogar numa posição livre.
+    Os argumentos são do tipo list e int, respetivamente.
+    É retornado um argumento do tipo str.
     tabuleiro x pedra → str
     """
     tabuleiro_copia = cria_copia_tabuleiro(tabuleiro) #Para não modificar o tabuleiro original
@@ -644,6 +734,8 @@ def estratégia_normal(tabuleiro, pedra, k):
     ao final do turno, deve-se jogar nessa posição para garantir a vitória
     Bloquear o adversário: Se não houver nenhuma posição que permita vencer imediatamente, a estratégia deve ser jogar em uma 
     posição que impeça o adversário de completar uma linha com L pedras consecutivas no final do próximo turno.
+    Os argumentos são do tipo list, int e int, respetivamente.
+    É retornado um argumento do tipo str.
     tabuleiro x pedra x int → str
     """
     posicoes_maq = ()
@@ -690,6 +782,8 @@ def orbito(orb, lvl, pedra_str):
 def singleplayer(tabuleiro, pedra, lvl):
     """ 
     Função auxiliar que inicia o jogo singleplayer, de acordo com o nível de dificuldade escolhido.
+    Os argumentos são do tipo list, int e str, respetivamente.
+    É retornado um argumento do tipo int.
     tabuleiro x pedra x str → int
     """
     print(f"Jogo contra o computador ({lvl}).\nO jogador joga com '{pedra}'.")
@@ -706,6 +800,8 @@ def singleplayer(tabuleiro, pedra, lvl):
 def resto_singleplayer(tabuleiro, pedra, valor, lvl):
     """ 
     Função auxiliar que executa o jogo singleplayer até ao seu fim, de acordo com o nível de dificuldade escolhido.
+    Os argumentos são do tipo list, int, int e str, respetivamente.
+    É retornado um argumento do tipo int.
     tabuleiro x pedra x int x str → int
     """
     while not eh_fim_jogo(tabuleiro):
@@ -745,6 +841,8 @@ def resto_singleplayer(tabuleiro, pedra, valor, lvl):
 def multiplayer(tabuleiro, pedra):
     """ 
     Função auxiliar que inicia e executa até ao fim o jogo multiplayer, para dois jogadores.
+    Os argumentos são do tipo list e str, respetivamente.
+    É retornado um argumento do tipo int.
     tabuleiro x str → int
     """
     print("Jogo para dois jogadores.")
