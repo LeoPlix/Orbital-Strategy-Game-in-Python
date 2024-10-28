@@ -241,7 +241,7 @@ def cria_copia_tabuleiro(tabuleiro):
     Faz uma cópia do tabuleiro, de modo a não modificar o tabuleiro original.
     tabuleiro → tabuleiro
     """
-    return [[tabuleiro[i][j] for j in range(len(tabuleiro[i]))] for i in range(len(tabuleiro))]
+    return [[tabuleiro[i][j] for j in range(obtem_numero_orbitas(tabuleiro)*2)] for i in range(obtem_numero_orbitas(tabuleiro)*2)]
 
 #Seletores
 def obtem_numero_orbitas(tabuleiro):
@@ -249,7 +249,10 @@ def obtem_numero_orbitas(tabuleiro):
     Função que retorna o número de órbitas do tabuleiro.
     tabuleiro → int
     """
-    return len(tabuleiro) // 2
+    contador = 0
+    for i in tabuleiro:
+        contador += 1
+    return contador // 2
 
 def obtem_pedra(tabuleiro, posicao):
     """ 
@@ -269,7 +272,7 @@ def obtem_linha_horizontal(tabuleiro, posicao):
     linha_index = linha - 1 
     linha_horizontal = []
         
-    for i in range(len(tabuleiro[linha_index])):  #Percorre a linha
+    for i in range(obtem_numero_orbitas(tabuleiro)*2):  #Percorre a linha
         pos = cria_posicao(letras_possiveis[i], linha)  #Cria as posiçãos da linha
         pedra = tabuleiro[linha_index][i]
         linha_horizontal.append((pos, pedra))  #Adiciona as pedras à linha horizontal
@@ -285,7 +288,7 @@ def obtem_linha_vertical(tabuleiro, posicao):
     coluna_index = letras_possiveis.index(coluna)  
     linha_vertical = []
         
-    for i in range(len(tabuleiro)): #Percorre a coluna
+    for i in range(obtem_numero_orbitas(tabuleiro)*2): #Percorre a coluna
         pos = cria_posicao(coluna, i + 1)  #Cria as posições da coluna
         pedra = tabuleiro[i][coluna_index]
         linha_vertical.append((pos, pedra))  #Adiciona as pedras à linha vertical
@@ -323,7 +326,7 @@ def obtem_linhas_diagonais(tabuleiro, posicao):
                 i -= 1
                 j -= 1
             i, j = lin_index + 1, col_index + 1
-            while i < len(tabuleiro) and j < len(tabuleiro):  #Percorre diagonal abaixo/direita
+            while i < obtem_numero_orbitas(tabuleiro)*2 and j < obtem_numero_orbitas(tabuleiro)*2:  #Percorre diagonal abaixo/direita
                 diagonal.append((cria_posicao(letras_possiveis[j], i+1), tabuleiro[i][j]))
                 i += 1
                 j += 1
@@ -334,12 +337,12 @@ def obtem_linhas_diagonais(tabuleiro, posicao):
             lin_index = obtem_pos_lin(posicao) - 1
 
             i, j = lin_index, col_index  #Antidiagonal (ascendente da esquerda para a direita)
-            while i >= 0 and j < len(tabuleiro):  #Percorre antidiagonal acima/direita
+            while i >= 0 and j < obtem_numero_orbitas(tabuleiro)*2:  #Percorre antidiagonal acima/direita
                 antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
                 i -= 1
                 j += 1
             i, j = lin_index + 1, col_index - 1
-            while i < len(tabuleiro) and j >= 0:  #Percorre antidiagonal abaixo/esquerda
+            while i < obtem_numero_orbitas(tabuleiro)*2 and j >= 0:  #Percorre antidiagonal abaixo/esquerda
                 antidiagonal.append((cria_posicao(letras_possiveis[j], i + 1), tabuleiro[i][j]))
                 i += 1
                 j -= 1
@@ -358,8 +361,8 @@ def obtem_posicoes_pedra(tabuleiro, pedra):
     tabuleiro x pedra → tuplo de posicoes
     """
     posicoes = ()
-    for i in range(len(tabuleiro)):
-        for j in range(len(tabuleiro)):
+    for i in range(obtem_numero_orbitas(tabuleiro)*2):
+        for j in range(obtem_numero_orbitas(tabuleiro)*2):
             if tabuleiro[i][j] == pedra:   #Percorre todos os elementos do tabuleiro e verifica se a pedra é igual à pedra dada
                 posicoes += (cria_posicao(letras_possiveis[j], i + 1),)  #Adiciona a posição à lista de posições
     return tuple(ordena_posicoes(posicoes, obtem_numero_orbitas(tabuleiro)))  #Ordena as posições de acordo com a ordem específica de leitura do tabuleiro de Orbito
@@ -421,16 +424,16 @@ def tabuleiro_para_str(tabuleiro):
     string = " " #String vazia porque o tabuleiro começa com um espaço
     for i in range(obtem_numero_orbitas(tabuleiro)*2):
         string += "   " + letras_possiveis[i]  #Adiciona as letras das colunas com o respectivo espaçamento
-    for i in range(len(tabuleiro)):
+    for i in range(obtem_numero_orbitas(tabuleiro)*2):
         if i+1 < 10:
             string += "\n" + "0" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"  #Adiciona o número da linha e a pedra na posição na primeira coluna
         else:
             string += "\n" + str(i+1) + f" [{pedra_para_str(tabuleiro[i][0])}]"  #Para o caso especial de a linha ser 10 na primeira coluna
-        for j in range(len(tabuleiro)-1):
+        for j in range(obtem_numero_orbitas(tabuleiro)*2-1):
             string += f"-[{pedra_para_str(tabuleiro[i][j+1])}]"  #Adiciona as pedras nas restantes posições
             
-        if i < len(tabuleiro) - 1:  
-            string += "\n" + "    |" + "   |"*(len(tabuleiro)-1)  #Adiciona as linhas verticais
+        if i < obtem_numero_orbitas(tabuleiro)*2 - 1:  
+            string += "\n" + "    |" + "   |"*(obtem_numero_orbitas(tabuleiro)*2-1)  #Adiciona as linhas verticais
                 
     return string
 
@@ -456,25 +459,25 @@ def obtem_posicao_seguinte(tabuleiro, posicao, d):
         coluna = letras_possiveis.index(obtem_pos_col(posicao))
         linha = obtem_pos_lin(posicao) - 1
         coluna = letras_possiveis.index(obtem_pos_col(posicao))
-        orbita = min(linha, coluna, len(tabuleiro) - 1 - linha, len(tabuleiro) - 1 - coluna)
+        orbita = min(linha, coluna, obtem_numero_orbitas(tabuleiro)*2 - 1 - linha, obtem_numero_orbitas(tabuleiro)*2 - 1 - coluna)
         
         if d:  # Sentido horário
-            if linha == orbita and coluna < len(tabuleiro) - 1 - orbita:
+            if linha == orbita and coluna < obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita:
                 coluna += 1  # Move para a direita
-            elif coluna == len(tabuleiro) - 1 - orbita and linha < len(tabuleiro) - 1 - orbita:
+            elif coluna == obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita and linha < obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita:
                 linha += 1  # Move para baixo
-            elif linha == len(tabuleiro) - 1 - orbita and coluna > orbita:
+            elif linha == obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita and coluna > orbita:
                 coluna -= 1  # Move para a esquerda
             elif coluna == orbita and linha > orbita:
                 linha -= 1  # Move para cima
         else:  # Sentido anti-horário
             if linha == orbita and coluna > orbita:
                 coluna -= 1  # Move para a esquerda
-            elif coluna == orbita and linha < len(tabuleiro) - 1 - orbita:
+            elif coluna == orbita and linha < obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita:
                 linha += 1  # Move para baixo
-            elif linha == len(tabuleiro) - 1 - orbita and coluna < len(tabuleiro) - 1 - orbita:
+            elif linha == obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita and coluna < obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita:
                 coluna += 1  # Move para a direita
-            elif coluna == len(tabuleiro) - 1 - orbita and linha > orbita:
+            elif coluna == obtem_numero_orbitas(tabuleiro)*2 - 1 - orbita and linha > orbita:
                 linha -= 1  # Move para cima
                 
         return cria_posicao(letras_possiveis[coluna], linha + 1)
@@ -496,8 +499,8 @@ def roda_tabuleiro(tabuleiro):
             posicao_seguinte = obtem_posicao_seguinte(tabuleiro, posicao, False) #Obtém a posição seguinte
             coloca_pedra(tabuleiro_novo, posicao_seguinte, -1) #Coloca a pedra na posição seguinte
             
-        for i in range(len(tabuleiro)):
-            for j in range(len(tabuleiro[i])):
+        for i in range(obtem_numero_orbitas(tabuleiro)*2):
+            for j in range(obtem_numero_orbitas(tabuleiro)*2):
                 tabuleiro[i][j] = tabuleiro_novo[i][j]  #Substitui o tabuleiro original pelo novo
                 
         return tabuleiro
@@ -553,11 +556,10 @@ def eh_vencedor(tabuleiro, pedra):
     tabuleiro x pedra → bool
     """
     if eh_tabuleiro(tabuleiro) and eh_pedra_jogador(pedra):
-        n_orbitas = obtem_numero_orbitas(tabuleiro)
-        for i in range(len(tabuleiro)):
-            for j in range(len(tabuleiro)):
+        for i in range(obtem_numero_orbitas(tabuleiro)*2):
+            for j in range(obtem_numero_orbitas(tabuleiro)*2):
                 posicao = cria_posicao(letras_possiveis[j], i + 1) #Cria a posição 
-                if verifica_linha_pedras(tabuleiro, posicao, pedra, n_orbitas*2):  #Verifica se há uma linha de pedras consecutivas
+                if verifica_linha_pedras(tabuleiro, posicao, pedra, obtem_numero_orbitas(tabuleiro)*2):  #Verifica se há uma linha de pedras consecutivas
                     return True
     return False      
 
