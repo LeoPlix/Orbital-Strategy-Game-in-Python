@@ -32,7 +32,6 @@ def obtem_pos_lin(posicao):
     return posicao[1]
 
 #Reconhecedor
-
 def eh_posicao(arg):
     """
     Função que verifica se o argumento é uma posição.
@@ -43,18 +42,15 @@ def eh_posicao(arg):
     return isinstance(arg, tuple) and len(arg) == 2 and isinstance(arg[0], str) and isinstance(arg[1], int) and arg[0] in letras_possiveis and arg[1] in range(1,11)
 
 #Teste
-
 def posicoes_iguais(pos1, pos2):
     """
     Função que verifica se duas posições são iguais.
     Recebe duas posições e retorna um valor booleano True se forem iguais e False caso contrário.
     posicao x posicao → bool
     """
-    if eh_posicao(pos1) and eh_posicao(pos2):
-        return pos1 == pos2
+    return pos1 == pos2
 
 #Transformador
-
 def posicao_para_str(pos):
     """ 
     Função que converte uma posição para string.
@@ -84,7 +80,6 @@ def eh_posicao_valida(posicao, n):
         return obtem_pos_lin(posicao) <= n*2 and obtem_pos_col(posicao) in letras_possiveis[:n*2]
 
 #Alto Nível
-
 def obtem_posicoes_adjacentes(posicao, n, d):
     """ 
     Função que retorna as posições adjacentes a uma dada posição de um tabuleiro com determinado número de órbitas.
@@ -181,7 +176,7 @@ def pedra_para_str(pedra):
         return 'O'
     elif pedra == cria_pedra_preta():
         return 'X'
-    else:
+    elif pedra == cria_pedra_neutra():
         return ' '
     
 #Alto Nível
@@ -375,22 +370,20 @@ def coloca_pedra(tabuleiro, posicao, pedra):
     Função que coloca uma pedra numa dada posição do tabuleiro, modificando destrutivamente o tabuleiro original.
     tabuleiro x posicao x pedra → tabuleiro
     """
-    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra_jogador(pedra):
-        linha = obtem_pos_lin(posicao) - 1
-        coluna = letras_possiveis.index(obtem_pos_col(posicao))
-        tabuleiro[linha][coluna] = pedra  #Coloca a pedra na posição dada
-        return tabuleiro
+    linha = obtem_pos_lin(posicao) - 1
+    coluna = letras_possiveis.index(obtem_pos_col(posicao))
+    tabuleiro[linha][coluna] = pedra  #Coloca a pedra na posição dada
+    return tabuleiro
 
 def remove_pedra(tabuleiro, posicao):
     """ 
     Função que remove uma pedra de uma dada posição do tabuleiro, modificando destrutivamente o tabuleiro original.
     tabuleiro x posicao → tabuleiro
     """
-    if eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)):
-        linha = obtem_pos_lin(posicao) - 1
-        coluna = letras_possiveis.index(obtem_pos_col(posicao))
-        tabuleiro[linha][coluna] = cria_pedra_neutra()  #Remove a pedra da posição dada, substituindo-a por uma pedra neutra
-        return tabuleiro
+    linha = obtem_pos_lin(posicao) - 1
+    coluna = letras_possiveis.index(obtem_pos_col(posicao))
+    tabuleiro[linha][coluna] = cria_pedra_neutra()  #Remove a pedra da posição dada, substituindo-a por uma pedra neutra
+    return tabuleiro
 
 #Reconhecedor
 def eh_tabuleiro(arg):
@@ -586,6 +579,17 @@ def escolhe_movimento_manual(tabuleiro):
     Função que solicita ao jogador uma posição livre para colocar uma pedra e verifica se a mesma é possível.
     tabuleiro → str
     """
+    posicao_valida = False
+    while not posicao_valida:
+        posicao = input("Escolha uma posicao livre:")  #Solicita ao jogador que escolha uma posição livre
+        if str_para_posicao(posicao) in obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra()):
+            return posicao_para_str(posicao)
+        
+def escolhe_movimdnto_manual(tabuleiro):
+    """ 
+    Função que solicita ao jogador uma posição livre para colocar uma pedra e verifica se a mesma é possível.
+    tabuleiro → str
+    """
     if eh_tabuleiro(tabuleiro):
         posicao = input("Escolha uma posicao livre:")
         posicao_convertida = str_para_posicao(posicao)  #Solicita ao jogador que escolha uma posição livre
@@ -652,20 +656,17 @@ def estratégia_normal(tabuleiro, pedra, k):
             coloca_pedra(tabuleiro_copia, pedra_seguinte1, pedra) #Coloca a pedra na posição seguinte
 
             if verifica_linha_pedras(tabuleiro_copia, pedra_seguinte1, pedra, l):
-                posicoes_maq += (posicao,)  #Adiciona a posição à lista de posições da máquina
-                    
+                return posicao  #Adiciona a posição à lista de posições da máquina
+        
             roda_tabuleiro(tabuleiro_copia)  #Roda o tabuleiro de novo, para simular o tabuleiro da jogada do adversário
             coloca_pedra(tabuleiro_copia, pedra_seguinte2, -pedra)  #Coloca a pedra do adversário na posição seguinte à posição seguinte
             
             if verifica_linha_pedras(tabuleiro_copia, pedra_seguinte2, -pedra, l):
                 posicoes_adv += (posicao,)  #Adiciona a posição à lista de posições do adversário
-                  
-        if len(posicoes_maq) != 0:
-            return ordena_posicoes(posicoes_maq, obtem_numero_orbitas(tabuleiro))[0]   #Ordena as posições da máquina
+                
         if len(posicoes_adv) != 0:
             return ordena_posicoes(posicoes_adv, obtem_numero_orbitas(tabuleiro))[0]  #Ordena as posições do adversário
         
-    return ordena_posicoes(obtem_posicoes_pedra(tabuleiro, 0), obtem_numero_orbitas(tabuleiro))[0]
         
 def orbito(orb, lvl, pedra_str):
     """ 
@@ -769,4 +770,4 @@ def multiplayer(tabuleiro, pedra):
     print("EMPATE")
     return 0
 
-     
+
