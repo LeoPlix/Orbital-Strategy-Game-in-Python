@@ -79,10 +79,9 @@ def str_para_posicao(s):
     É retornado um argumento do tipo tuple.
     str → posicao   
     """
-    if isinstance(s, str) and len(s) == 2 and s[0] in letras_possiveis and s[1].isdigit() in range(1,10):
-        return cria_posicao(s[0], int(s[1]))
-    if isinstance(s, str) and len(s) == 3 and s[0] in letras_possiveis and s[1:3] == "10":
-        return cria_posicao(s[0], 10)   #Caso especial para linha igual a 10
+    if isinstance(s, str) and len(s) <= 3 and s[0] in letras_possiveis and s[1:].isdigit():
+        if int(s[1:]) in range(1, 11):
+            return cria_posicao(s[0], int(s[1:]))
     return False
 
 def eh_posicao_valida(posicao, n):
@@ -670,22 +669,6 @@ def escolhe_movimento_manual(tabuleiro):
         posicao = input("Escolha uma posicao livre:")  #Solicita ao jogador que escolha uma posição livre
         if str_para_posicao(posicao) in obtem_posicoes_pedra(tabuleiro, cria_pedra_neutra()):
             return posicao_para_str(posicao)
-        
-def escolhe_movimdnto_manual(tabuleiro):
-    """ 
-    Função que solicita ao jogador uma posição livre para colocar uma pedra e verifica se a mesma é possível.
-    O argumento é do tipo list.
-    É retornado um argumento do tipo str.
-    tabuleiro → str
-    """
-    if eh_tabuleiro(tabuleiro):
-        posicao = input("Escolha uma posicao livre:")
-        posicao_convertida = str_para_posicao(posicao)  #Solicita ao jogador que escolha uma posição livre
-        if isinstance(posicao, str) and posicao_convertida and eh_posicao_valida(posicao_convertida, obtem_numero_orbitas(tabuleiro)):
-            if obtem_pedra(tabuleiro, str_para_posicao(posicao)) == 0:
-                return f'{posicao}'
-            
-    return escolhe_movimento_manual(tabuleiro)   #Se a posição não for válida, solicita novamente
 
 def escolhe_movimento_auto(tabuleiro, pedra, lvl):
     """ 
