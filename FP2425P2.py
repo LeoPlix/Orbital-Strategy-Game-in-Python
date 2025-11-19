@@ -584,7 +584,7 @@ def verifica_linha_pedras(tabuleiro, posicao, pedra, k):
     A função auxiliar conta_consecutivos é utilizada para contar o número de pedras consecutivas.
     Os argumentos são do tipo list, tuple, int e int, respetivamente.
     É retornado um argumento do tipo boolean.
-    tabuleiro x posicao x pedra x int → bool
+    tabuleiro x posicao x pedra x int → boolean
     """
     if eh_tabuleiro(tabuleiro) and eh_posicao_valida(posicao, obtem_numero_orbitas(tabuleiro)) and eh_pedra(pedra) and k>0:
         if obtem_pedra(tabuleiro, posicao) != pedra or obtem_pedra(tabuleiro, posicao) == 0:
