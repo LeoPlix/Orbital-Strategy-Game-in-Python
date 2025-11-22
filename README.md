@@ -1,116 +1,87 @@
-Este projeto implementa o jogo Órbito, um jogo de estratégia baseado na colocação e rotação de peças num tabuleiro quadrado composto por órbitas concêntricas. O jogo pode ser jogado entre dois jogadores ou entre um jogador e o computador, que dispõe de diferentes níveis de dificuldade.
+# Órbito — Orbital Strategy Game
 
-Funcionalidades Principais
+Órbito is a turn-based strategy game played on a square board made of concentric orbits. Players place stones and the board rotates after each move, creating dynamic positions and tactical depth. This repository contains a Python implementation of the game, including AI opponents.
 
-Tabuleiro configurável entre 2 e 5 órbitas (dimensão entre 4×4 e 10×10)
+## Features
 
-Três tipos de pedra:
+- Configurable board with 2 to 5 orbits (board side length: 4×4 up to 10×10)
+- Three stone types:
+  - Black stone (1)
+  - White stone (-1)
+  - Neutral stone (0)
+- Automatic counter-clockwise rotation of the board after every move
+- Automatic detection of winning lines (horizontal, vertical and diagonal)
+- Adjacency rules that include orthogonal and diagonal neighbors
+- Game modes:
+  - Singleplayer (with AI)
+  - Multiplayer (two human players)
+- AI with two difficulty levels: Easy and Normal
 
-Pedra preta (1)
+## Project Structure
 
-Pedra branca (-1)
+Everything is implemented in a single file:
 
-Pedra neutra (0)
+- `FP2425P2.py`
 
-Rotação automática do tabuleiro no sentido anti-horário após cada jogada
+This file contains the Abstract Data Types (ADTs), game functions and the AI implementation.
 
-Deteção automática de linhas vencedoras horizontais, verticais e diagonais
+## Implemented ADTs
 
-Sistema de adjacências, tanto ortogonais como diagonais
+1. ADT Position
+   - Represents board coordinates as tuples (column, row)
+   - Construction, validation, conversion and comparison functions
+   - Functions to obtain adjacent positions (orthogonal and full 8-direction adjacency)
 
-Modos de jogo disponíveis: singleplayer e multiplayer
+2. ADT Stone
+   - Stones are represented as integers
+   - Factory, predicate, comparison and conversion functions (converted to characters `X`, `O`, or space)
 
-Inteligência artificial com níveis fácil e normal
+3. ADT Board
+   - Generate empty or pre-filled boards
+   - Selectors for horizontal, vertical and diagonal lines
+   - Functions to find positions that contain a specific stone
+   - Place and remove stones
+   - Rotate the board
+   - Detect consecutive lines and game end conditions
 
-Estrutura do Projeto
+## Game Mechanics
 
-O projeto está totalmente contido no ficheiro:
+- A player (human or AI) chooses an empty position.
+- The chosen stone is placed on the board.
+- The board rotates counter-clockwise automatically.
+- The game checks for a winner or for a full board.
+- A player wins by forming a consecutive line whose length equals the board side (n × 2).
 
-FP2425P2.py 
+## Artificial Intelligence
 
-FP2425P2
+Easy level
+- Attempts to play a position that, after rotation, becomes adjacent to one of its own stones.
+- If that is not possible, plays the first available position in a predefined order.
 
-Nele encontram-se os TADs (Posição, Pedra e Tabuleiro), as funções de jogo e a implementação da IA.
+Normal level
+- Simulates moves including the rotation to try to win on the current turn.
+- If it cannot win immediately, it attempts to block the opponent's imminent win.
+- Uses forward simulation of future moves to decide the best position.
 
-TADs Implementados
-1. TAD Posição
+## Game Modes
 
-Representa coordenadas do tabuleiro como tuplos (coluna, linha)
-
-Contém funções de construção, validação, conversão e comparação
-
-Permite obter adjacentes ortogonais ou completos (8 direções)
-
-2. TAD Pedra
-
-Representação das pedras do jogo como inteiros
-
-Funções para criação, teste, comparação e conversão para caracteres (X, O ou espaço)
-
-3. TAD Tabuleiro
-
-Geração de tabuleiros vazios ou preenchidos
-
-Seletores de linhas horizontais, verticais e diagonais
-
-Obtenção de posições com determinada pedra
-
-Colocação e remoção de pedras
-
-Rotação do tabuleiro
-
-Deteção de linhas consecutivas e condições de fim do jogo
-
-Mecânica do Jogo
-
-O jogador (ou a IA) escolhe uma posição livre.
-
-A pedra é colocada no tabuleiro.
-
-O tabuleiro roda no sentido anti-horário.
-
-Verifica-se se existe um vencedor ou se o tabuleiro está cheio.
-
-Um jogador vence se formar uma linha de tamanho igual ao lado do tabuleiro (n×2).
-
-Inteligência Artificial
-Nível Fácil
-
-Tenta jogar numa posição que, após a rotação, fique adjacente a uma pedra sua.
-
-Se isso não for possível, joga na primeira posição livre segundo a ordem definida.
-
-Nível Normal
-
-Tenta vencer no próprio turno simulando a jogada e a rotação.
-
-Se não for possível, tenta bloquear uma vitória iminente do adversário.
-
-Usa simulação de jogadas futuras para determinar a melhor posição.
-
-Modos de Jogo
 Singleplayer
-
-O jogador escolhe se joga com X ou O.
-
-O computador joga com dificuldade definida.
-
-O jogo alterna entre jogadas humanas e automáticas, com rotação sempre no fim do turno.
+- The human chooses to play as `X` or `O`.
+- The computer plays at the chosen difficulty (easy or normal).
+- Turns alternate between human and computer; the board rotates at the end of every turn.
 
 Multiplayer
+- Two human players alternate turns.
+- Rules, including automatic rotation, are the same as singleplayer.
 
-Dois jogadores humanos alternam turnos.
+## How to Run
 
-As regras e a rotação mantêm-se exatamente iguais ao singleplayer.
+Make sure you have Python installed. Then run:
 
-Execução
 python FP2425P2.py
 
+The program will ask for:
+- Number of orbits (board size)
+- Game mode (easy, normal, or two-player)
+- Starting player's stone (`X` or `O`)
 
-O programa solicitará:
-
-Número de órbitas
-
-Modo de jogo (fácil, normal ou dois jogadores)
-
-Pedra inicial do jogador (X ou O)
